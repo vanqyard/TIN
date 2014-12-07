@@ -12,3 +12,7 @@ int fileExists(const char *name) {
 	int result = stat(CONFIG_NAME, &s);
 	return result == 0;
 }
+
+void openConfig() {
+
+}

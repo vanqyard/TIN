@@ -20,6 +20,18 @@
 
 #define CONFIG_NAME ".tin"
 
+struct config {
+	char *name;
+	long modify;
+	long size;
+};
+
+struct list {
+	struct config *config;
+	struct list *next;
+};
+
 int fileExists(const char *name);
+void openConfig();
 
 #endif /* LIB_H_ */
