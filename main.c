@@ -5,19 +5,11 @@
  *      Author: kamil
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
+#include "lib.h"
 #include "daemon.h"
 #include "get.h"
 #include "update.h"
 #include "init.h"
-
-#define DAEMON	"daemon"
-#define GET 	"get"
-#define UPDATE	"update"
-#define INIT	"init"
 
 int main(int argc, char **argv) {
 	if(argc < 2) {
