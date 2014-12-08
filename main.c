@@ -6,10 +6,10 @@
  */
 
 #include "lib.h"
-#include "daemon.h"
-#include "get.h"
-#include "update.h"
-#include "init.h"
+#include "daemon/daemon.h"
+#include "get/get.h"
+#include "update/update.h"
+#include "init/init.h"
 
 int main(int argc, char **argv) {
 	if(argc < 2) {

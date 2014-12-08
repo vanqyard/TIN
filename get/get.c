@@ -1,7 +1,7 @@
 /*
  * get.c
  *
- *  Created on: 7 gru 2014
+ *  Created on: 8 gru 2014
  *      Author: kamil
  */
 

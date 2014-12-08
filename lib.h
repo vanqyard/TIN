@@ -19,6 +19,7 @@
 #define INIT	"init"
 
 #define CONFIG_NAME ".tin"
+#define SEPARATOR '\t'
 
 struct config {
 	char *name;
@@ -30,6 +31,8 @@ struct list {
 	struct config *config;
 	struct list *next;
 };
+
+extern struct list *root;
 
 int fileExists(const char *name);
 void openConfig();
