@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #define DAEMON	"daemon"
 #define GET 	"get"
@@ -19,22 +20,12 @@
 #define INIT	"init"
 
 #define CONFIG_NAME ".tin"
+#define CONFIG_TEMP_NAME ".temp_tin"
 #define SEPARATOR '\t'
-
-struct config {
-	char *name;
-	long modify;
-	long size;
-};
-
-struct list {
-	struct config *config;
-	struct list *next;
-};
-
-extern struct list *root;
+#define EXISTS_FLAG "EXISTS"
+#define DELETED_FLAG "DELETED"
+#define MAX_LENGTH 255
 
 int fileExists(const char *name);
-void openConfig();
 
 #endif /* LIB_H_ */

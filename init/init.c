@@ -5,6 +5,7 @@
  *      Author: kamil
  */
 
+#include "../lib.h"
 #include "init.h"
 
 int init(int argc, char **argv) {

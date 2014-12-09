@@ -9,5 +9,6 @@
 #define UPDATE_H_
 
 int update(int argc, char **argv);
+void updateFile(const char *name);
 
 #endif /* UPDATE_H_ */

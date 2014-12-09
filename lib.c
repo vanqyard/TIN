@@ -9,10 +9,10 @@
 
 int fileExists(const char *name) {
 	struct stat s;
-	int result = stat(CONFIG_NAME, &s);
-	return result == 0;
-}
-
-void openConfig() {
-
+	if(stat(name, &s) == 0) {
+		if(s.st_mode & S_IFREG) {
+			return 1;
+		}
+	}
+	return 0;
 }
