@@ -8,6 +8,6 @@
 #ifndef INIT_H_
 #define INIT_H_
 
-int init(int argc, char **argv);
+int initMain(int argc, char **argv);
 
 #endif /* INIT_H_ */

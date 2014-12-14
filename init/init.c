@@ -8,7 +8,7 @@
 #include "../lib.h"
 #include "init.h"
 
-int init(int argc, char **argv) {
+int initMain(int argc, char **argv) {
 	char c;
 	FILE *f;
 
@@ -25,6 +25,8 @@ int init(int argc, char **argv) {
 		return 1;
 	}
 	fclose(f);
+
+	printf("Stworzono plik konfiguracyjny.\n");
 
 	return 0;
 }

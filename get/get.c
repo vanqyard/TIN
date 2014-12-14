@@ -5,6 +5,9 @@
  *      Author: kamil
  */
 
-int get(int argc, char **argv) {
+#include "../lib.h"
+#include "get.h"
+
+int getMain(int argc, char **argv) {
 	return 0;
 }

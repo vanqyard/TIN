@@ -10,9 +10,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <time.h>
 
 #define DAEMON	"daemon"
 #define GET 	"get"
@@ -25,6 +22,7 @@
 #define EXISTS_FLAG "EXISTS"
 #define DELETED_FLAG "DELETED"
 #define MAX_LENGTH 255
+#define PERIOD 2
 
 int fileExists(const char *name);
 

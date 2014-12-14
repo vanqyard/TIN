@@ -5,6 +5,7 @@
  *      Author: kamil
  */
 
+#include <string.h>
 #include "lib.h"
 #include "daemon/daemon.h"
 #include "get/get.h"
@@ -13,23 +14,24 @@
 
 int main(int argc, char **argv) {
 	if(argc <= 1) {
+		printf("Wprowadź poprawnie parametry!\ndaemon | get | update | init\n");
 		return 1;
 	}
 
 	if(strcmp(argv[1], DAEMON) == 0) {
-		return daemon(argc, argv);
+		return daemonMain(argc, argv);
 	}
 
 	else if(strcmp(argv[1], GET) == 0) {
-		return get(argc, argv);
+		return getMain(argc, argv);
 	}
 
 	else if(strcmp(argv[1], UPDATE) == 0) {
-		return update(argc, argv);
+		return updateMain(argc, argv);
 	}
 
 	else if(strcmp(argv[1], INIT) == 0) {
-		return init(argc, argv);
+		return initMain(argc, argv);
 	}
 
 	return 1;

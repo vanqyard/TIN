@@ -5,6 +5,7 @@
  *      Author: kamil
  */
 
+#include <sys/stat.h>
 #include "lib.h"
 
 int fileExists(const char *name) {

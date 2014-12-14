@@ -8,6 +8,6 @@
 #ifndef GET_H_
 #define GET_H_
 
-int get(int argc, char **argv);
+int getMain(int argc, char **argv);
 
 #endif /* GET_H_ */

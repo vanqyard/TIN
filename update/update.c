@@ -7,10 +7,11 @@
  */
 
 #include <dirent.h>
+#include <sys/stat.h>
 #include "../lib.h"
 #include "update.h"
 
-int update(int argc, char **argv) {
+int updateMain(int argc, char **argv) {
 	int i;
 	DIR *dir;
 	struct dirent *ent;

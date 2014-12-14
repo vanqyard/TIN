@@ -8,6 +8,7 @@
 #ifndef DAEMON_H_
 #define DAEMON_H_
 
-int daemon(int argc, char **argv);
+int daemonMain(int argc, char **argv);
+void listen();
 
 #endif /* DAEMON_H_ */
