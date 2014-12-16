@@ -68,7 +68,7 @@ void updateFile(const char *name) {
 	int exists = 0, modified = 0;
 
 	if((config = fopen(CONFIG_NAME, "r")) == NULL
-	|| (config_temp = fopen(CONFIG_TEMP_NAME, "w")) == NULL) {
+	|| (config_temp = fopen(TEMP_NAME, "w")) == NULL) {
 		return;
 	}
 
@@ -111,33 +111,5 @@ void updateFile(const char *name) {
 	fclose(config);
 
 	remove(CONFIG_NAME);
-	rename(CONFIG_TEMP_NAME, CONFIG_NAME);
-}
-
-void copyFile(const char *name) {
-	FILE *input, *output;
-	char buffer;
-	char new_name[MAX_LENGTH];
-
-	strcpy(new_name, PREFIX);
-	strcat(new_name, name);
-
-	input = fopen(name, "r");
-	output = fopen(new_name, "w");
-
-	while(fread(&buffer, 1, 1, input) == 1) {
-		fwrite(&buffer, 1, 1, output);
-	}
-
-	fclose(output);
-	fclose(input);
-}
-
-void deleteFile(const char *name) {
-	char new_name[MAX_LENGTH];
-
-	strcpy(new_name, PREFIX);
-	strcat(new_name, name);
-
-	remove(new_name);
+	rename(TEMP_NAME, CONFIG_NAME);
 }

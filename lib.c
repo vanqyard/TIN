@@ -6,6 +6,7 @@
  */
 
 #include <sys/stat.h>
+#include <string.h>
 #include "lib.h"
 
 int fileExists(const char *name) {
@@ -16,4 +17,32 @@ int fileExists(const char *name) {
 		}
 	}
 	return 0;
+}
+
+void copyFile(const char *name) {
+	FILE *input, *output;
+	char buffer;
+	char new_name[MAX_LENGTH];
+
+	strcpy(new_name, PREFIX);
+	strcat(new_name, name);
+
+	input = fopen(name, "r");
+	output = fopen(new_name, "w");
+
+	while(fread(&buffer, 1, 1, input) == 1) {
+		fwrite(&buffer, 1, 1, output);
+	}
+
+	fclose(output);
+	fclose(input);
+}
+
+void deleteFile(const char *name) {
+	char new_name[MAX_LENGTH];
+
+	strcpy(new_name, PREFIX);
+	strcat(new_name, name);
+
+	remove(new_name);
 }
