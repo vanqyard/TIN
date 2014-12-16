@@ -6,6 +6,7 @@
  */
 
 #include "../lib.h"
+#include "../destroy/destroy.h"
 #include "init.h"
 
 int initMain(int argc, char **argv) {
@@ -20,7 +21,8 @@ int initMain(int argc, char **argv) {
 		}
 	}
 
-	if((f = fopen(CONFIG_NAME, "w+")) == NULL) {
+	removeAll();
+	if((f = fopen(CONFIG_NAME, "w")) == NULL) {
 		printf("Wystąpił problem ze stworzeniem pliku!\n");
 		return 1;
 	}

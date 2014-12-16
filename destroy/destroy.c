@@ -12,8 +12,6 @@
 
 int destroyMain(int argc, char **argv) {
 	char c;
-	DIR *dir;
-	struct dirent *ent;
 
 	if(!fileExists(CONFIG_NAME)) {
 		printf("Nie znalezniono repozytorium!\n");
@@ -26,26 +24,33 @@ int destroyMain(int argc, char **argv) {
 		return 0;
 	}
 
-	remove(CONFIG_NAME);
-
-	if ((dir = opendir(".")) == NULL) {
+	if(remove(CONFIG_NAME) || removeAll()) {
 		printf("Wystąpił problem z oczytem katalogu!\n");
 		return 1;
 	}
+	printf("Pomyślnie usunięto repozytorium.\n");
 
-	while((ent = readdir(dir)) != NULL) {
-		if(!strcmp(ent->d_name, ".")
-		|| !strcmp(ent->d_name, "..")) {
+	return 0;
+}
+
+int removeAll() {
+	DIR *dir;
+	struct dirent *ent;
+
+	if ((dir = opendir(".")) == NULL) {
+		return 1;
+	}
+
+	while ((ent = readdir(dir)) != NULL) {
+		if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..")) {
 			continue;
 		}
 
-		if(!strncmp(ent->d_name, PREFIX, strlen(PREFIX))) {
+		if (!strncmp(ent->d_name, PREFIX, strlen(PREFIX))) {
 			remove(ent->d_name);
 		}
 	}
-
 	closedir(dir);
-	printf("Pomyślnie usunięto repozytorium.\n");
 
 	return 0;
 }
