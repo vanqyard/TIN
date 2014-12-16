@@ -14,7 +14,6 @@
 int daemonMain(int argc, char **argv) {
 	pid_t pid = 0;
 	pid_t sid = 0;
-	FILE *f;
 
 	pid = fork();
 	if(pid < 0) {
@@ -36,15 +35,16 @@ int daemonMain(int argc, char **argv) {
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
 
-	f = fopen ("log.txt", "w+");
 	while(1) {
 		sleep(PERIOD);
 		listen();
 	}
-	fclose(f);
 
 	return 0;
 }
 
 void listen() {
+}
+
+void send() {
 }

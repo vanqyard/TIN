@@ -15,6 +15,11 @@ int destroyMain(int argc, char **argv) {
 	DIR *dir;
 	struct dirent *ent;
 
+	if(!fileExists(CONFIG_NAME)) {
+		printf("Nie znalezniono repozytorium!\n");
+		return 1;
+	}
+
 	printf("Jestś pewien, że chcesz usunąć repozytorium?\n(T - tak, inny znak - zakończ)\n");
 	scanf("%c", &c);
 	if (c != 'T') {
@@ -40,7 +45,6 @@ int destroyMain(int argc, char **argv) {
 	}
 
 	closedir(dir);
-
 	printf("Pomyślnie usunięto repozytorium.\n");
 
 	return 0;

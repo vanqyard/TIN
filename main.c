@@ -15,7 +15,7 @@
 
 int main(int argc, char **argv) {
 	if(argc <= 1) {
-		printf("Wprowadź poprawnie parametry!\ndaemon | get | update | init\n");
+		printf("Wprowadź poprawnie parametry!\ndaemon | get | update | init | destroy\n");
 		return 1;
 	}
 
