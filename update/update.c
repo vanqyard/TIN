@@ -8,6 +8,8 @@
 
 #include <dirent.h>
 #include <sys/stat.h>
+#include <string.h>
+#include <time.h>
 #include "../lib.h"
 #include "update.h"
 
@@ -79,6 +81,7 @@ void updateFile(const char *name) {
 			if(!strcmp(name, temp_name) && strcmp(DELETED_FLAG, temp_flag)) {
 				fprintf(config_temp, "%s\t%ld\t%ld\t%s\n", temp_name, time(NULL), temp_size, DELETED_FLAG);
 				printf("Usunięto istniejący plik: %s\n", name);
+				deleteFile(name);
 			}
 			else {
 				fprintf(config_temp, "%s\t%ld\t%ld\t%s\n", temp_name, temp_date, temp_size, temp_flag);
@@ -90,6 +93,7 @@ void updateFile(const char *name) {
 				modified = 1;
 				if(temp_date != s.st_mtime) {
 					printf("Zmodyfikowano istniejący plik: %s\n", name);
+					copyFile(name);
 				}
 			}
 			else {
@@ -100,6 +104,7 @@ void updateFile(const char *name) {
 	if(exists && !modified) {
 		fprintf(config_temp, "%s\t%ld\t%ld\t%s\n", name, s.st_mtime, s.st_size, EXISTS_FLAG);
 		printf("Dodano nowy plik: %s\n", name);
+		copyFile(name);
 	}
 
 	fclose(config_temp);
@@ -107,4 +112,32 @@ void updateFile(const char *name) {
 
 	remove(CONFIG_NAME);
 	rename(CONFIG_TEMP_NAME, CONFIG_NAME);
+}
+
+void copyFile(const char *name) {
+	FILE *input, *output;
+	char buffer;
+	char new_name[MAX_LENGTH];
+
+	strcpy(new_name, PREFIX);
+	strcat(new_name, name);
+
+	input = fopen(name, "r");
+	output = fopen(new_name, "w");
+
+	while(fread(&buffer, 1, 1, input) == 1) {
+		fwrite(&buffer, 1, 1, output);
+	}
+
+	fclose(output);
+	fclose(input);
+}
+
+void deleteFile(const char *name) {
+	char new_name[MAX_LENGTH];
+
+	strcpy(new_name, PREFIX);
+	strcat(new_name, name);
+
+	remove(new_name);
 }

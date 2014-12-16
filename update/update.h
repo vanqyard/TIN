@@ -10,5 +10,7 @@
 
 int updateMain(int argc, char **argv);
 void updateFile(const char *name);
+void copyFile(const char *name);
+void deleteFile(const char *name);
 
 #endif /* UPDATE_H_ */

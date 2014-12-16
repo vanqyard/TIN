@@ -23,6 +23,7 @@
 #define DELETED_FLAG "DELETED"
 #define MAX_LENGTH 255
 #define PERIOD 2
+#define PREFIX ".tin."
 
 int fileExists(const char *name);
 
