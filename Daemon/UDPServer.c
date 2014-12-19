@@ -5,12 +5,11 @@
 #include <netdb.h>
 #include "PrintSocketAddr.c"
 #include "DieWithMessage.c"
-#define MAXSTRINGLENGTH 100
-
-char *service = 2002;
+#define PACKET_SIZE 100
 
 int main(int argc, char *argv[]) {
-
+	char* service = "2002"; // First arg: local port/service
+	
 	// Construct the server address structure
 	struct addrinfo addrCriteria;						// Criteria for address
 	memset(&addrCriteria, 0, sizeof(addrCriteria));		// Zero out structure
@@ -44,11 +43,11 @@ int main(int argc, char *argv[]) {
 		socklen_t clntAddrLen = sizeof(clntAddr);
 
 		// Block until receive message from a client
-		char buffer[MAXSTRINGLENGTH]; // I/O buffer
+		char buffer[PACKET_SIZE]; // I/O buffer
 
 		// Size of received message
-		ssize_t numBytesRcvd = recvfrom(sock, buffer, MAXSTRINGLENGTH, 0,
-		(struct sockaddr *) &clntAddr, &clntAddrLen);
+		ssize_t numBytesRcvd = recvfrom(sock, buffer, PACKET_SIZE, 0, (struct sockaddr *) &clntAddr, &clntAddrLen);
+
 		if (numBytesRcvd < 0)
 			DieWithSystemMessage("recvfrom() failed");
 		

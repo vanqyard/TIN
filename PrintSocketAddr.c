@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* Supported address families. */
 #define AF_UNSPEC	0
 #define AF_UNIX		1	/* Unix domain sockets 		*/
@@ -58,6 +59,7 @@ void PrintSocketAddress(const struct sockaddr *address, FILE *stream) {
 		case AF_INET6:
 			numericAddress = &((struct sockaddr_in6 *) address)->sin6_addr;
 			port = ntohs(((struct sockaddr_in6 *) address)->sin6_port);
+
 			break;
 		default:
 			fputs("[unknown type]", stream);

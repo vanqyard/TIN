@@ -6,25 +6,18 @@
 #include <netdb.h>
 #include "PrintSocketAddr.c"
 #include "DieWithMessage.c"
-
-#define MAXSTRINGLENGTH 100
-char* server;
-
-
+#define PACKET_SIZE 100
 
 int main(int argc, char *argv[]) {
-	if (argc < 3 || argc > 4) // Test for correct number of arguments
-		DieWithUserMessage("Parameter(s)", "<Server Address/Name> <Echo Word> [<Server Port/Service>]");
-
-	char *server = argv[1];			// First arg: server address/name
-	char *echoString = argv[2]; 	// Second arg: word to echo
+	char *server = "127.0.0.1";			// First arg: server address/name
+	char *echoString = "idiots everywhere"; 	// Second arg: word to echo
 	size_t echoStringLen = strlen(echoString);
 
-	if (echoStringLen > MAXSTRINGLENGTH) // Check input length
+	if (echoStringLen > PACKET_SIZE) // Check input length
 		DieWithUserMessage(echoString, "string too long");
 
 	// Third arg (optional): server port/service
-	char *servPort = (argc == 4) ? argv[3] : "echo";
+	char* servPort = "2002";
 
 	// Tell the system what kind(s) of address info
 	struct addrinfo addrCriteria;
@@ -65,8 +58,9 @@ int main(int argc, char *argv[]) {
 
 	// Set length of from address structure (in-out parameter)
 	socklen_t fromAddrLen = sizeof(fromAddr);
-	char buffer[MAXSTRINGLENGTH + 1]; // I/O buffer
-	numBytes = recvfrom(sock, buffer, MAXSTRINGLENGTH, 0,
+
+	char buffer[PACKET_SIZE + 1]; // I/O buffer
+	numBytes = recvfrom(sock, buffer, PACKET_SIZE, 0,
 	(struct sockaddr *) &fromAddr, &fromAddrLen);
 
 	if (numBytes < 0)
