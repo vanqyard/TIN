@@ -3,42 +3,38 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
-#include "PrintSocketAddr.c"
-#include "DieWithMessage.c"
+#include "../Common/Secure.c"
 #define PACKET_SIZE 100
+char* port = "2002";			// ocal port/service
+struct addrinfo *servAddr;		// List of server addresses
 
 int main(int argc, char *argv[]) {
-	char* service = "2002"; // First arg: local port/service
-	
+
 	// Construct the server address structure
 	struct addrinfo addrCriteria;						// Criteria for address
 	memset(&addrCriteria, 0, sizeof(addrCriteria));		// Zero out structure
-	addrCriteria.ai_family = AF_UNSPEC;					// Any address family
-	addrCriteria.ai_flags = AI_PASSIVE;					// Accept on any address/port
+	addrCriteria.ai_family = AF_UNSPEC;					// Any address family: IP4 or IP6
+	addrCriteria.ai_flags = AI_PASSIVE;					// For wildcard IP address: accept on any address/port
 	addrCriteria.ai_socktype = SOCK_DGRAM;				// Only datagram socket
-	addrCriteria.ai_protocol = IPPROTO_UDP;				// Only UDP socket
+	addrCriteria.ai_protocol = IPPROTO_UDP;				// Only UDP socket (0 if any protocol)
 
-	struct addrinfo *servAddr; // List of server addresses
-	int rtnVal = getaddrinfo(NULL, service, &addrCriteria, &servAddr);
-	
-	if (rtnVal != 0)
-		DieWithUserMessage("getaddrinfo() failed", gai_strerror(rtnVal));
+	Getaddrinfo(NULL, port, &addrCriteria, &servAddr);		// (NULL, port, &hints, &result)
 
 	// Create socket for incoming connections
-	int sock = socket(servAddr->ai_family, servAddr->ai_socktype, servAddr->ai_protocol);
-	if (sock < 0)
-		DieWithSystemMessage("socket() failed");
+	int sock = Socket(servAddr->ai_family, 
+						servAddr->ai_socktype, 
+							servAddr->ai_protocol);
 	
 	// Bind to the local address
-	if (bind(sock, servAddr->ai_addr, servAddr->ai_addrlen) < 0)
-		DieWithSystemMessage("bind() failed");
-
-	// Free address list allocated by getaddrinfo()
-	freeaddrinfo(servAddr);
+	Bind(sock, servAddr->ai_addr, servAddr->ai_addrlen);
 	
-	for (;;) { // Run forever
-		struct sockaddr_storage clntAddr; // Client address
-		
+	// Free address list allocated by getaddrinfo()
+	Freeaddrinfo(servAddr);
+	
+	for (;;) { // Run forever in real time loop
+		// Client address
+		struct sockaddr_storage clntAddr;
+
 		// Set Length of client address structure (in-out parameter)
 		socklen_t clntAddrLen = sizeof(clntAddr);
 

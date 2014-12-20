@@ -4,16 +4,16 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netdb.h>
-#include "PrintSocketAddr.c"
-#include "DieWithMessage.c"
+#include "../Common/PrintSocketAddr.c"
+#include "../Common/DieWithMessage.c"
 #define PACKET_SIZE 100
 
 int main(int argc, char *argv[]) {
-	char *server = "127.0.0.1";			// First arg: server address/name
-	char *echoString = "idiots everywhere"; 	// Second arg: word to echo
-	size_t echoStringLen = strlen(echoString);
+	char *server = "127.0.0.1";					// server address/name
+	char *echoString = "idiots everywhere"; 	// word to echo
+	size_t echoStringLen = strlen(echoString);	// size of message
 
-	if (echoStringLen > PACKET_SIZE) // Check input length
+	if (echoStringLen > PACKET_SIZE) 			// Check input length
 		DieWithUserMessage(echoString, "string too long");
 
 	// Third arg (optional): server port/service
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
 
 	char buffer[PACKET_SIZE + 1]; // I/O buffer
 	numBytes = recvfrom(sock, buffer, PACKET_SIZE, 0,
-	(struct sockaddr *) &fromAddr, &fromAddrLen);
+						(struct sockaddr *) &fromAddr, &fromAddrLen);
 
 	if (numBytes < 0)
 		DieWithSystemMessage("recvfrom() failed");
