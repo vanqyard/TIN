@@ -8,45 +8,41 @@
 #include "../Common/DieWithMessage.c"
 #define PACKET_SIZE 100
 
-int main(int argc, char *argv[]) {
-	char *server = "127.0.0.1";					// server address/name
-	char *echoString = "idiots everywhere"; 	// word to echo
-	size_t echoStringLen = strlen(echoString);	// size of message
+void SetUDPSocketCriteria(struct addrinfo* addrCriteria);
+char *server = "127.0.0.1";									// server address/name
+char *echoString = "idiots everywhere"; 					// word to echo
+char *servPort = "2002";									// Third arg (optional): server port/service
 
+int main(int argc, char *argv[]) {
+	size_t echoStringLen = strlen(echoString);				// size of message
+	
 	if (echoStringLen > PACKET_SIZE) 			// Check input length
 		DieWithUserMessage(echoString, "string too long");
+	
+	// Construct the server address structure
+	struct addrinfo addrCriteria;							// Criteria for address
+	SetUDPSocketCriteria(&addrCriteria);
 
-	// Third arg (optional): server port/service
-	char* servPort = "2002";
-
-	// Tell the system what kind(s) of address info
-	struct addrinfo addrCriteria;
-	memset(&addrCriteria, 0, sizeof(addrCriteria));
-	addrCriteria.ai_family = AF_UNSPEC;
-
-	// For the following fields, a zero value means we want
-	// Criteria for address match
-	// Zero out structure
-	// Any address family "don't care"
-	addrCriteria.ai_socktype = SOCK_DGRAM;
-	addrCriteria.ai_protocol = IPPROTO_UDP;
-
-	// Only datagram sockets
-	// Only UDP protocol
-	// Get address(es)
 	struct addrinfo *servAddr; // List of server addresses
 	int rtnVal = getaddrinfo(server, servPort, &addrCriteria, &servAddr);
 	if (rtnVal != 0)
 		DieWithUserMessage("getaddrinfo() failed", gai_strerror(rtnVal));
 	
 	// Create a datagram/UDP socket
-	int sock = socket(servAddr->ai_family, servAddr->ai_socktype, servAddr->ai_protocol); // Socket descriptor for client
-	
+	int sock = socket(servAddr->ai_family, 
+					  servAddr->ai_socktype, 
+					  servAddr->ai_protocol); // Socket descriptor for client
+
 	if (sock < 0)
 		DieWithSystemMessage("socket() failed");
 	
 	// Send the string to the server
-	ssize_t numBytes = sendto(sock, echoString, echoStringLen, 0, servAddr->ai_addr, servAddr->ai_addrlen);
+	ssize_t numBytes = sendto(sock, 
+							  echoString, 
+							  echoStringLen, 
+							  0, 
+							  servAddr->ai_addr, 
+							  servAddr->ai_addrlen);
 	
 	if (numBytes < 0)
 		DieWithSystemMessage("sendto() failed");
@@ -59,9 +55,13 @@ int main(int argc, char *argv[]) {
 	// Set length of from address structure (in-out parameter)
 	socklen_t fromAddrLen = sizeof(fromAddr);
 
-	char buffer[PACKET_SIZE + 1]; // I/O buffer
-	numBytes = recvfrom(sock, buffer, PACKET_SIZE, 0,
-						(struct sockaddr *) &fromAddr, &fromAddrLen);
+	char buffer[PACKET_SIZE + 1]; 					// I/O buffer
+	numBytes = recvfrom(sock, 
+						buffer, 
+						PACKET_SIZE, 
+						0,
+						(struct sockaddr *) &fromAddr, 
+						&fromAddrLen);
 
 	if (numBytes < 0)
 		DieWithSystemMessage("recvfrom() failed");
@@ -79,4 +79,12 @@ int main(int argc, char *argv[]) {
 	printf("Received: %s\n", buffer); // Print the echoed string
 	close(sock);
 	exit(0);
+}
+
+void SetUDPSocketCriteria(struct addrinfo* addrCriteria) {
+	memset(addrCriteria, 0, sizeof(*addrCriteria));
+	
+	addrCriteria->ai_family = AF_UNSPEC;
+	addrCriteria->ai_socktype = SOCK_DGRAM;
+	addrCriteria->ai_protocol = IPPROTO_UDP;	
 }
