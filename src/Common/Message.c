@@ -7,5 +7,7 @@ struct Message {
 	const char* dst;
 	const char* src;
 	const char* data;
+	int bytesFrom;
+	int bytesTo;
 	int ctrl;
 }

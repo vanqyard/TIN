@@ -3,9 +3,11 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <openssl/md5.h>
 #include "../Common/Secure.c"
 #define PACKET_SIZE 100
 
+void fillBuffer(char* buffer, const char* content);
 void SetUDPSocketCriteria(struct addrinfo* addrCriteria);
 char* port = "2002";										// ocal port/service
 struct addrinfo *servAddr;									// List of server addresses
@@ -38,7 +40,7 @@ main(int argc, char *argv[]) {
 		socklen_t clntAddrLen = sizeof(clntAddr);
 
 		// Block until receive message from a client
-		char buffer[PACKET_SIZE]; // I/O buffer
+		char buffer[PACKET_SIZE]; 		// I/O buffer
 
 		// Size of received message
 		ssize_t numBytesRcvd = recvfrom(sock, 
@@ -54,7 +56,9 @@ main(int argc, char *argv[]) {
 		fputs("Handling client ", stdout);
 		PrintSocketAddress((struct sockaddr *) &clntAddr, stdout);
 		fputc('\n', stdout);
-	
+		
+		fillBuffer(buffer, "md5");
+		
 		// Send received datagram back to the client
 		ssize_t numBytesSent = sendto(sock, 
 									  buffer, 
@@ -79,4 +83,9 @@ void SetUDPSocketCriteria(struct addrinfo* addrCriteria) {
 	addrCriteria->ai_flags = AI_PASSIVE;
 	addrCriteria->ai_socktype = SOCK_DGRAM;
 	addrCriteria->ai_protocol = IPPROTO_UDP;	
+}
+
+void fillBuffer(char* buffer, const char* content) {
+	memset(buffer, 0, sizeof(buffer));
+	memcpy(buffer, content, 3);
 }
