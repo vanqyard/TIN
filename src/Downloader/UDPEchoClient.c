@@ -5,8 +5,6 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include "../Common/Secure.c"
-//#include "../Common/PrintSocketAddr.c"
-//#include "../Common/DieWithMessage.c"
 #define PACKET_SIZE 100
 
 void SetUDPSocketCriteria(struct addrinfo* addrCriteria);
@@ -16,7 +14,8 @@ char *servPort = "2002";									// Third arg (optional): server port/service
 int bytesCounter = 0;
 ssize_t numBytes;
 
-int main(int argc, char *argv[]) {
+int 
+main(int argc, char *argv[]) {
 	size_t echoStringLen = strlen(echoString);				// size of message
 	
 	//if (echoStringLen > PACKET_SIZE) 			// Check input length

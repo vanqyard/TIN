@@ -5,6 +5,7 @@
 #include <netdb.h>
 #include <openssl/md5.h>
 #include "../Common/Secure.c"
+#include "../Common/Filestat.c"
 #define PACKET_SIZE 100
 
 void fillBuffer(char* buffer, const char* content);
