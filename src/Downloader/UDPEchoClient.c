@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <fcntl.h>
 #include "../Common/Secure.c"
 #define PACKET_SIZE 20
 
@@ -17,10 +18,7 @@ ssize_t numBytes;
 int 
 main(int argc, char *argv[]) {
 	size_t echoStringLen = strlen(echoString);				// size of message
-	
-	//if (echoStringLen > PACKET_SIZE) 			// Check input length
-	//	DieWithUserMessage(echoString, "string too long");
-	
+
 	// Construct the server address structure
 	struct addrinfo addrCriteria;							// Criteria for address
 	SetUDPSocketCriteria(&addrCriteria);
@@ -33,24 +31,13 @@ main(int argc, char *argv[]) {
 					  servAddr->ai_socktype, 
 					  servAddr->ai_protocol); // Socket descriptor for client
 
-
-
-	
-	//while(bytesCounter != 0) {
-		// Send the string to the server
-		numBytes = sendto(sock, 
-						  echoString, 
-						  echoStringLen, 
-						  0, 
-						  servAddr->ai_addr, 
-						  servAddr->ai_addrlen);
-
-		if (numBytes < 0)
-			DieWithSystemMessage("sendto() failed");
-		else if (numBytes != echoStringLen)
-			DieWithUserMessage("sendto() error", "sent unexpected number of bytes");
-	//}
-	
+	numBytes = Sendto(sock, 
+					  echoString, 
+					  echoStringLen, 
+					  0, 
+					  servAddr->ai_addr, 
+					  servAddr->ai_addrlen);
+		
 	// Receive a response
 	struct sockaddr_storage fromAddr; // Source address of server
 
@@ -58,23 +45,14 @@ main(int argc, char *argv[]) {
 	socklen_t fromAddrLen = sizeof(fromAddr);
 
 	char buffer[PACKET_SIZE + 1]; 					// I/O buffer
-	numBytes = recvfrom(sock, 
+	numBytes = Recvfrom(sock, 
 						buffer, 
 						PACKET_SIZE, 
 						0,
 						(struct sockaddr *) &fromAddr, 
 						&fromAddrLen);
 
-	if (numBytes < 0)
-		DieWithSystemMessage("recvfrom() failed");
-	else if (numBytes != echoStringLen)
-		DieWithUserMessage("recvfrom() error", "received unexpected number of bytes");
-
-	// Verify reception from expected source
-	//if (!SockAddrsEqual(servAddr->ai_addr, (struct sockaddr *) &fromAddr))
-	//	DieWithUserMessage("recvfrom()", "received a packet from unknown source");
-	
-	freeaddrinfo(servAddr);
+	Freeaddrinfo(servAddr);
 	buffer[echoStringLen] = '\0';
 
 	// Null-terminate received data

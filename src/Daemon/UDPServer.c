@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <fcntl.h>
 #include <openssl/md5.h>
 #include "../Common/Secure.c"
 #include "../Common/Filestat.c"
@@ -27,6 +28,9 @@ main(int argc, char *argv[]) {
 					  servAddr->ai_socktype, 
 					  servAddr->ai_protocol);
 	
+	//int nonBlocking = 1;
+	//	fcntl( sock, F_SETFL, O_NONBLOCK, nonBlocking );
+
 	// Bind to the local address
 	Bind(sock, servAddr->ai_addr, servAddr->ai_addrlen);
 
@@ -66,7 +70,7 @@ main(int argc, char *argv[]) {
 		// Send received datagram back to the client
 		ssize_t numBytesSent = Sendto(sock, 
 									  buffer, 
-									  numBytesRcvd, 			//numBytesRcvd, 
+									  PACKET_SIZE,			//numBytesRcvd, 			//numBytesRcvd, 
 									  0, 
 									  (struct sockaddr *) &clntAddr, 
 									  sizeof(clntAddr));
