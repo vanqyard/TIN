@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include "../Common/Secure.c"
-#define PACKET_SIZE 100
+#define PACKET_SIZE 20
 
 void SetUDPSocketCriteria(struct addrinfo* addrCriteria);
 char *server = "127.0.0.1";									// server address/name

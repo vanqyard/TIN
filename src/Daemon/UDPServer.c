@@ -6,7 +6,7 @@
 #include <openssl/md5.h>
 #include "../Common/Secure.c"
 #include "../Common/Filestat.c"
-#define PACKET_SIZE 100
+#define PACKET_SIZE 20
 
 void fillBuffer(char* buffer, const char* content);
 void SetUDPSocketCriteria(struct addrinfo* addrCriteria);
@@ -51,13 +51,13 @@ main(int argc, char *argv[]) {
 										(struct sockaddr *) &clntAddr, 
 										&clntAddrLen);
 		
-		fprintf(stderr, "%d \n", numBytesRcvd);
+		//fprintf(stderr, "%d \n", numBytesRcvd);
 		
 		/** handle client **/
 		
 		fputs("Handling client ", stdout);
-		//PrintSocketAddress((struct sockaddr *) &clntAddr, stdout);
-		//fputc('\n', stdout);
+		PrintSocketAddress((struct sockaddr *) &clntAddr, stdout);
+		fputc('\n', stdout);
 		
 		/*******************/
 
@@ -66,12 +66,12 @@ main(int argc, char *argv[]) {
 		// Send received datagram back to the client
 		ssize_t numBytesSent = Sendto(sock, 
 									  buffer, 
-									  PACKET_SIZE, 			//numBytesRcvd, 
+									  numBytesRcvd, 			//numBytesRcvd, 
 									  0, 
 									  (struct sockaddr *) &clntAddr, 
 									  sizeof(clntAddr));
 		
-		fprintf(stderr, "%d \n", numBytesSent);
+		//fprintf(stderr, "%d \n", numBytesSent);
 	}
 	
 	// NOT REACHED
