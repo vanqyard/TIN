@@ -37,3 +37,43 @@ int Getaddrinfo(const char *node, const char *service,
 
 	return retVal;
 }
+
+ssize_t Recvfrom(int sockfd, void *buf, size_t len, int flags,
+                        struct sockaddr *src_addr, socklen_t *addrlen) {
+
+	ssize_t numBytesRcvd = recvfrom(sockfd, 
+									buf, 
+									len, 
+									flags, 
+									src_addr, 
+									addrlen);
+
+	if (numBytesRcvd < 0)
+		DieWithSystemMessage("recvfrom() failed");
+		
+	return numBytesRcvd;
+}
+
+ssize_t Sendto(int sockfd, const void *buf, size_t len, int flags,
+                      const struct sockaddr *dest_addr, socklen_t addrlen) {
+	
+	ssize_t numBytesSent = sendto(sockfd, 
+								  buf, 
+								  len, 
+								  flags, 
+								  dest_addr, 
+								  addrlen);
+	
+	if (numBytesSent < 0)
+		DieWithSystemMessage("sendto() failed)");
+
+	return numBytesSent;
+}
+
+
+
+
+
+
+
+

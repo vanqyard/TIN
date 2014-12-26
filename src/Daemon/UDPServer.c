@@ -17,10 +17,10 @@ int
 main(int argc, char *argv[]) {
 
 	// Construct the server address structure
-	struct addrinfo addrCriteria;							// Criteria for address
+	struct addrinfo addrCriteria;
 	SetUDPSocketCriteria(&addrCriteria);
 
-	Getaddrinfo(NULL, port, &addrCriteria, &servAddr);		// (NULL, port, &hints, &result)
+	Getaddrinfo(NULL, port, &addrCriteria, &servAddr);
 
 	// Create socket for incoming connections
 	int sock = Socket(servAddr->ai_family, 
@@ -44,34 +44,34 @@ main(int argc, char *argv[]) {
 		char buffer[PACKET_SIZE]; 		// I/O buffer
 
 		// Size of received message
-		ssize_t numBytesRcvd = recvfrom(sock, 
+		ssize_t numBytesRcvd = Recvfrom(sock, 
 										buffer, 
 										PACKET_SIZE, 
 										0, 
 										(struct sockaddr *) &clntAddr, 
 										&clntAddrLen);
-
-		if (numBytesRcvd < 0)
-			DieWithSystemMessage("recvfrom() failed");
+		
+		fprintf(stderr, "%d \n", numBytesRcvd);
+		
+		/** handle client **/
 		
 		fputs("Handling client ", stdout);
-		PrintSocketAddress((struct sockaddr *) &clntAddr, stdout);
-		fputc('\n', stdout);
+		//PrintSocketAddress((struct sockaddr *) &clntAddr, stdout);
+		//fputc('\n', stdout);
 		
-		fillBuffer(buffer, "md5");
+		/*******************/
+
+		//fillBuffer(buffer, "md5");
 		
 		// Send received datagram back to the client
-		ssize_t numBytesSent = sendto(sock, 
+		ssize_t numBytesSent = Sendto(sock, 
 									  buffer, 
-									  numBytesRcvd, 
+									  PACKET_SIZE, 			//numBytesRcvd, 
 									  0, 
 									  (struct sockaddr *) &clntAddr, 
 									  sizeof(clntAddr));
-
-		if (numBytesSent < 0)
-			DieWithSystemMessage("sendto() failed)");
-		else if (numBytesSent != numBytesRcvd)
-			DieWithUserMessage("sendto()", "sent unexpected number of bytes");
+		
+		fprintf(stderr, "%d \n", numBytesSent);
 	}
 	
 	// NOT REACHED
