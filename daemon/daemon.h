@@ -9,6 +9,7 @@
 #define DAEMON_H_
 
 int daemonMain(int argc, char **argv);
-void listen();
+void doListen();
+void doSend();
 
 #endif /* DAEMON_H_ */

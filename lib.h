@@ -26,7 +26,7 @@
 #define EXISTS_FLAG		"EXISTS"
 #define DELETED_FLAG	"DELETED"
 #define MAX_LENGTH		255
-#define PERIOD			2
+#define PERIOD			1
 #define PREFIX			".tin."
 
 #define FLAG_CFR	0

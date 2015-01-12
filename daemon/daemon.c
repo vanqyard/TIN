@@ -5,6 +5,9 @@
  *      Author: kamil
  */
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -37,14 +40,18 @@ int daemonMain(int argc, char **argv) {
 
 	while(1) {
 		//sleep(PERIOD);
-		listen();
+		doListen();
 	}
 
 	return 0;
 }
 
-void listen() {
+void doListen() {
+	int sockfd;
+	struct sockaddr_in servaddr;
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
 }
 
-void send() {
+void doSend() {
 }
