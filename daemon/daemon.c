@@ -36,7 +36,7 @@ int daemonMain(int argc, char **argv) {
 	close(STDERR_FILENO);
 
 	while(1) {
-		sleep(PERIOD);
+		//sleep(PERIOD);
 		listen();
 	}
 
