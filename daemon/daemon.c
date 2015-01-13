@@ -5,6 +5,7 @@
  *      Author: kamil
  */
 
+#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -13,10 +14,11 @@
 #include <sys/stat.h>
 #include "../lib.h"
 #include "daemon.h"
-#include "sf_dae.c"
 
 int daemonMain(int argc, char **argv) {
-	pid_t pid = 0;
+	int sock;
+	struct sockaddr_in serverAddr, clientAddr;
+	/*pid_t pid = 0;
 	pid_t sid = 0;
 
 	pid = fork();
@@ -38,39 +40,17 @@ int daemonMain(int argc, char **argv) {
 
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
-	close(STDERR_FILENO);
+	close(STDERR_FILENO); */
 
-	/* ====[ network ]==== */
+	sock = socket(AF_INET, SOCK_DGRAM, 0);
 
-	int sockfd;
-	struct sockaddr_in servaddr, cliaddr;
+	bzero(&serverAddr, sizeof(serverAddr));
+	serverAddr.sin_family = AF_INET;
+	serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	serverAddr.sin_port = htons(DAEMON_PORT);
 
-	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family			= AF_INET;
-	servaddr.sin_addr.s_addr	= htonl(INADDR_ANY);
-	servaddr.sin_port 			= htons(DAEMON_PORT);
-
-	bind(sockfd, (struct sockaddr*) &servaddr, sizeof(servaddr));
-
-	sf_dae(sockfd, (struct sockaddr*) &cliaddr, sizeof(cliaddr));
-
-	//while(1) {
-		//sleep(PERIOD);
-		//doListen();
-	//}
+	bind(sock, (struct sockaddr*) &serverAddr, sizeof(serverAddr));
+	doListen(sock, (struct sockaddr*) &clientAddr, sizeof(clientAddr));
 
 	return 0;
-}
-
-void doListen() {
-	int sockfd;
-	struct sockaddr_in servaddr;
-	bzero(&servaddr, sizeof(servaddr));
-	servaddr.sin_family = AF_INET;
-}
-
-void doSend() {
-
 }

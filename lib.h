@@ -17,8 +17,10 @@
 #define INIT	"init"
 #define DESTROY	"destroy"
 
-#define DAEMON_PORT	2000
-#define GET_PORT	2001
+#define LOCAL_IP		"10.0.2.15"
+#define BROADCAST_IP	"10.0.2.255"
+#define DAEMON_PORT		2000
+#define GET_PORT		2001
 
 #define CONFIG_NAME		".tin"
 #define TEMP_NAME		".temp_tin"
@@ -26,7 +28,6 @@
 #define EXISTS_FLAG		"EXISTS"
 #define DELETED_FLAG	"DELETED"
 #define MAX_LENGTH		255
-#define PERIOD			1
 #define PREFIX			".tin."
 
 #define FLAG_CFR	0
@@ -34,36 +35,36 @@
 #define FLAG_PFR	2
 #define FLAG_PFD	3
 
-typedef struct msg {
+typedef struct MSG {
 	char flag;
 	char data[511];
-} msg;
+} MSG;
 
-typedef struct msgCFR {
+typedef struct MSG_CFR {
 	char flag;
 	char data[511];
-} msgCFR;
+} MSG_CFR;
 
-typedef struct msgCFD {
+typedef struct MSG_CFD {
 	char flag;
 	unsigned int size;
 	char data[507];
-} msgCFD;
+} MSG_CFD;
 
-typedef struct msgPFR {
+typedef struct MSG_PFR {
 	char flag;
 	char name[64];
 	unsigned int number;
 	char data[443];
-} msgPFR;
+} MSG_PFR;
 
-typedef struct msgPFD {
+typedef struct MSG_PFD {
 	char flag;
 	char name[64];
 	unsigned int number;
 	unsigned int size;
 	char data[439];
-} msgPFD;
+} MSG_PFD;
 
 int fileExists(const char *name);
 void copyFile(const char *name);
