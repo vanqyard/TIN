@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include "../lib.h"
 #include "daemon.h"
+#include "sf_dae.c"
 
 int daemonMain(int argc, char **argv) {
 	pid_t pid = 0;
@@ -23,6 +24,7 @@ int daemonMain(int argc, char **argv) {
 		printf("Wystąpił nieokreślony błąd!\n");
 		return 1;
 	}
+
 	else if(pid > 0) {
 		printf("Uruchomiono proces w tle.\n");
 		return 0;
@@ -38,10 +40,26 @@ int daemonMain(int argc, char **argv) {
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
 
-	while(1) {
+	/* ====[ network ]==== */
+
+	int sockfd;
+	struct sockaddr_in servaddr, cliaddr;
+
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family			= AF_INET;
+	servaddr.sin_addr.s_addr	= htonl(INADDR_ANY);
+	servaddr.sin_port 			= htons(DAEMON_PORT);
+
+	bind(sockfd, (struct sockaddr*) &servaddr, sizeof(servaddr));
+
+	sf_dae(sockfd, (struct sockaddr*) &cliaddr, sizeof(cliaddr));
+
+	//while(1) {
 		//sleep(PERIOD);
-		doListen();
-	}
+		//doListen();
+	//}
 
 	return 0;
 }
@@ -54,4 +72,5 @@ void doListen() {
 }
 
 void doSend() {
+
 }
