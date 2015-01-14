@@ -12,6 +12,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#define max(a,b) \
+   ({ __typeof__ (a) _a = (a); \
+       __typeof__ (b) _b = (b); \
+     _a > _b ? _a : _b; })
+
 #define DAEMON	"daemon"
 #define GET 	"get"
 #define UPDATE	"update"
@@ -29,6 +34,7 @@
 #define EXISTS_FLAG		"EXISTS"
 #define DELETED_FLAG	"DELETED"
 #define MAX_LENGTH		255
+#define NAME_LENGTH		64
 #define PREFIX			".tin."
 
 #define FLAG_CFR	0
@@ -54,18 +60,21 @@ typedef struct MSG_CFD {
 
 typedef struct MSG_PFR {
 	char flag;
-	char name[64];
+	char name[NAME_LENGTH];
 	unsigned int number;
 	char data[443];
 } MSG_PFR;
 
 typedef struct MSG_PFD {
 	char flag;
-	char name[64];
+	char name[NAME_LENGTH];
 	unsigned int number;
 	unsigned int size;
 	char data[439];
 } MSG_PFD;
+
+#define CONF_FILE_LENGTH (sizeof(MSG_CFD) - sizeof(char) - sizeof(unsigned int))
+#define PORT_FILE_LENGTH (sizeof(MSG_PFD) - sizeof(char) - NAME_LENGTH - sizeof(unsigned int) - sizeof(unsigned int))
 
 int fileExists(const char *name);
 void copyFile(const char *name);

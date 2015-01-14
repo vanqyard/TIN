@@ -50,6 +50,7 @@ int daemonMain(int argc, char **argv) {
 	serverAddr.sin_port = htons(DAEMON_PORT);
 
 	bind(sock, (struct sockaddr*) &serverAddr, sizeof(serverAddr));
+
 	doListen(sock, (struct sockaddr_in *) &clientAddr, sizeof(clientAddr));
 
 	return 0;
