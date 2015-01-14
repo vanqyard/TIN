@@ -19,20 +19,19 @@
 #include "get.h"
 
 int getMain(int argc, char **argv) {
-	char buffer[512];
+	MSG message;
 	int result;
 
 	//memcpy(buffer, 0, 512);
-	buffer[0] = 0;
-	buffer[1] = 2;
+	message.flag = FLAG_CFR;
 
-	result = sendToBroadcast(buffer, 512);
+	result = sendToBroadcast(&message);
 	printf("%d\n", result);
 
 	return 0;
 }
 
-int sendToBroadcast(const char *buffer, int size) {
+int sendToBroadcast(MSG* message) {
 	int sock;
 	struct sockaddr_in addr;
 	int numbytes;
@@ -50,7 +49,7 @@ int sendToBroadcast(const char *buffer, int size) {
 	addr.sin_port = htons(DAEMON_PORT);
 	addr.sin_addr.s_addr = inet_addr(BROADCAST_IP);
 
-	if((numbytes=sendto(sock, buffer, size, 0, &addr, sizeof(addr))) < 0) {
+	if((numbytes=sendto(sock, message, sizeof(MSG), 0, &addr, sizeof(addr))) < 0) {
 		return 3;
 	}
 

@@ -17,8 +17,8 @@
 #define INIT	"init"
 #define DESTROY	"destroy"
 
-#define LOCAL_IP		"10.0.2.15"
-#define BROADCAST_IP	"10.0.2.255"
+#define LOCAL_IP		"127.0.0.1"
+#define BROADCAST_IP	"255.255.255.255"
 #define DAEMON_PORT		2000
 #define GET_PORT		2001
 
