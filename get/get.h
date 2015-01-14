@@ -9,6 +9,6 @@
 #define GET_H_
 
 int getMain(int argc, char **argv);
-int sendToBroadcast(const char *buffer, int size);
+int sendToBroadcast(MSG* message);
 
 #endif /* GET_H_ */
