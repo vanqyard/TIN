@@ -10,5 +10,6 @@
 
 int getMain(int argc, char **argv);
 int sendToBroadcast(MSG* message);
+int receiveIPAddresses();
 
 #endif /* GET_H_ */

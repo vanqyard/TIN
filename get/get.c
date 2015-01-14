@@ -26,9 +26,49 @@ int getMain(int argc, char **argv) {
 	message.flag = FLAG_CFR;
 
 	result = sendToBroadcast(&message);
-	printf("%d\n", result);
+	printf("result = %d\n", result);
+
+	receiveIPAddresses();
 
 	return 0;
+}
+
+int receiveIPAddresses() {
+	int sock;
+	int perm = 1;
+	struct sockaddr_in addr;
+	int numbytes;
+	MSG_CFD message;
+
+	if((sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
+		printf("sock() failed");
+		return -1;
+	} else printf("sock() ok");
+
+	if(setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &perm, sizeof(addr)) < 0) {
+		printf("setsockopt() failed");
+		return -1;
+	} else printf("setsockopt() ok");
+
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(DAEMON_PORT);
+	addr.sin_addr.s_addr = inet_addr(INADDR_ANY);
+
+	if(bind(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
+		printf("bind() failed");
+		return -1;
+	} else printf("bind() ok");
+
+	if((numbytes=recvfrom(sock, &message, sizeof(MSG_CFD), 0, NULL, NULL)) < 0) {
+		printf("recvfrom() failed");
+		return -1;
+	} else printf("recvfrom() ok");
+
+	printf("%d \n", numbytes);
+
+	close(sock);
+
+	return numbytes;
 }
 
 int sendToBroadcast(MSG* message) {
@@ -38,22 +78,24 @@ int sendToBroadcast(MSG* message) {
 	int perm = 1;
 
 	if((sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
-		return 1;
+		return -1;
 	}
 
 	if(setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &perm, sizeof(addr)) < 0) {
-		return 2;
+		return -1;
 	}
 
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(DAEMON_PORT);
 	addr.sin_addr.s_addr = inet_addr(BROADCAST_IP);
 
-	if((numbytes=sendto(sock, message, sizeof(MSG), 0, &addr, sizeof(addr))) < 0) {
-		return 3;
+	if((numbytes=sendto(sock, message, sizeof(MSG), 0,
+			(struct sockaddr*)&addr, sizeof(addr))) < 0) {
+
+		return -1;
 	}
 
 	close(sock);
 
-	return 0;
+	return numbytes;
 }

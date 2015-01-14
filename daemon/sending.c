@@ -2,43 +2,45 @@
 
 int sendConfFileData(MSG_CFR *confFileRequest, int sock, struct sockaddr_in *address, socklen_t length) {
 	unsigned int size;
+	int result;
 	FILE *file;
 	char *data;
 	MSG_CFD confFileData;
 
 	if((file = fopen(CONFIG_NAME, "r")) == NULL) {
-		return 1;
+		return -1;
 	}
 
 	fseek(file, 0, SEEK_END);
 	size = ftell(file);
 	if(size > CONF_FILE_LENGTH) {
-		return 2;
+		return -1;
 	}
 	data = malloc(size);
 
 	fseek(file, 0, SEEK_SET);
 	if(fread(data, 1, size, file) != size) {
-		return 3;
+		return -1;
 	}
 
 	confFileData.flag = FLAG_CFD;
 	confFileData.size = size;
 	memcpy(confFileData.data, &data, size);
 
-	sendto(sock, &confFileData, sizeof(MSG_CFD), 0, (struct sockaddr *)address, length);
+	result = sendto(sock, &confFileData, sizeof(MSG_CFD), 0, (struct sockaddr *)address, length);
 
-	return 0;
+	return result;
 }
 
 int sendPortFileData(MSG_PFR *portFileRequest, int sock, struct sockaddr_in *address, socklen_t length) {
 	unsigned int size, position;
+	int result;
 	FILE *file;
 	char *data;
 	MSG_PFD portFileData;
 
 	if((file = fopen(portFileRequest->name, "r")) == NULL) {
-		return 1;
+		return -1;
 	}
 
 	fseek(file, 0, SEEK_END);
@@ -48,7 +50,7 @@ int sendPortFileData(MSG_PFR *portFileRequest, int sock, struct sockaddr_in *add
 
 	fseek(file, position, SEEK_SET);
 	if(fread(data, 1, size, file) != size) {
-		return 3;
+		return -1;
 	}
 
 	portFileData.flag = FLAG_PFD;
@@ -57,7 +59,7 @@ int sendPortFileData(MSG_PFR *portFileRequest, int sock, struct sockaddr_in *add
 	portFileData.size = size;
 	memcpy(portFileData.data, data, size);
 
-	sendto(sock, &portFileData, sizeof(portFileData), 0, (struct sockaddr *)address, length);
+	result = sendto(sock, &portFileData, sizeof(portFileData), 0, (struct sockaddr *)address, length);
 
-	return 0;
+	return result;
 }
