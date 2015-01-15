@@ -34,39 +34,25 @@ int getMain(int argc, char **argv) {
 }
 
 int receiveIPAddresses() {
-	int sock;
-	int perm = 1;
-	struct sockaddr_in addr;
+	int 					sockfd;
+	struct sockaddr_in 		servaddr;
 	int numbytes;
-	MSG_CFD message;
+	char recvline[516];
+	int perm=1;
 
-	if((sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
-		printf("sock() failed");
-		return -1;
-	} else printf("sock() ok");
+	bzero(&servaddr, sizeof(servaddr));
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_port = htons(DAEMON_PORT);
+	inet_pton(AF_INET,"127.0.0.1", &servaddr.sin_addr);
 
-	if(setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &perm, sizeof(addr)) < 0) {
-		printf("setsockopt() failed");
-		return -1;
-	} else printf("setsockopt() ok");
+	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	setsockopt(sockfd, SOL_SOCKET, SO_BROADCAST, &perm, sizeof(servaddr));
+	numbytes = recvfrom(sockfd, recvline, 516, 0, NULL, NULL);
 
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(DAEMON_PORT);
-	addr.sin_addr.s_addr = inet_addr(INADDR_ANY);
 
-	if(bind(sock, (struct sockaddr*)&addr, sizeof(addr)) < 0) {
-		printf("bind() failed");
-		return -1;
-	} else printf("bind() ok");
+	printf("bytes received = %d \n", numbytes);
 
-	if((numbytes=recvfrom(sock, &message, sizeof(MSG_CFD), 0, NULL, NULL)) < 0) {
-		printf("recvfrom() failed");
-		return -1;
-	} else printf("recvfrom() ok");
-
-	printf("%d \n", numbytes);
-
-	close(sock);
+	close(sockfd);
 
 	return numbytes;
 }
