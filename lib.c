@@ -46,3 +46,25 @@ void deleteFile(const char *name) {
 
 	remove(new_name);
 }
+
+int removeAll() {
+	DIR *dir;
+	struct dirent *ent;
+
+	if ((dir = opendir(".")) == NULL) {
+		return 1;
+	}
+
+	while ((ent = readdir(dir)) != NULL) {
+		if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..")) {
+			continue;
+		}
+
+		if (!strncmp(ent->d_name, PREFIX, strlen(PREFIX))) {
+			remove(ent->d_name);
+		}
+	}
+	closedir(dir);
+
+	return 0;
+}

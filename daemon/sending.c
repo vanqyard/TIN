@@ -1,11 +1,9 @@
 #include "daemon.h"
 
-int sendConfFileData(MSG_CFR *confFileRequest, int sock, struct sockaddr_in *address, socklen_t length) {
+int sendConfFileData(struct MSG *msg1, int sock, struct sockaddr_in *address, socklen_t length) {
 	unsigned int size;
-	int result;
 	FILE *file;
-	char *data;
-	MSG_CFD confFileData;
+	struct MSG *msg2;
 
 	if((file = fopen(CONFIG_NAME, "r")) == NULL) {
 		return -1;
@@ -16,35 +14,31 @@ int sendConfFileData(MSG_CFR *confFileRequest, int sock, struct sockaddr_in *add
 	if(size > CONF_FILE_LENGTH) {
 		return -1;
 	}
-	data = malloc(size);
 
 	fseek(file, 0, SEEK_SET);
-	if(fread(data, 1, size, file) != size) {
+	msg2 = malloc(sizeof(struct MSG));
+	if(fread(msg2->content.cfd.data, 1, size, file) != size) {
 		return -1;
 	}
+	msg2->flag = CFD;
+	msg2->content.cfd.size = size;
 
-	confFileData.flag = FLAG_CFD;
-	confFileData.size = size;
-	memcpy(confFileData.data, &data, size);
-
-	result = sendto(sock, &confFileData, sizeof(MSG_CFD), 0, (struct sockaddr *)address, length);
-
-	return result;
+	address->sin_port = htons(GET_PORT);
+	return sendto(sock, msg2, sizeof(struct MSG), 0, (struct sockaddr *)address, length);
 }
 
-int sendPortFileData(MSG_PFR *portFileRequest, int sock, struct sockaddr_in *address, socklen_t length) {
+int sendPortFileData(struct MSG *msg1, int sock, struct sockaddr_in *address, socklen_t length) {
 	unsigned int size, position;
-	int result;
 	FILE *file;
 	char *data;
-	MSG_PFD portFileData;
+	struct MSG *msg2;
 
-	if((file = fopen(portFileRequest->name, "r")) == NULL) {
+	if((file = fopen(msg1->content.pfr.name, "r")) == NULL) {
 		return -1;
 	}
 
 	fseek(file, 0, SEEK_END);
-	position = portFileRequest->number*PORT_FILE_LENGTH;
+	position = msg1->content.pfr.number * PORT_FILE_LENGTH;
 	size = max(PORT_FILE_LENGTH, ftell(file) - position);
 	data = malloc(size);
 
@@ -53,13 +47,12 @@ int sendPortFileData(MSG_PFR *portFileRequest, int sock, struct sockaddr_in *add
 		return -1;
 	}
 
-	portFileData.flag = FLAG_PFD;
-	memcpy(portFileData.name, portFileRequest->name, strlen(portFileRequest->name));
-	portFileData.number = portFileRequest->number;
-	portFileData.size = size;
-	memcpy(portFileData.data, data, size);
+	msg2 = malloc(sizeof(struct MSG));
+	msg2->flag = PFD;
+	memcpy(msg2->content.pfd.name, msg1->content.pfd.name, strlen(msg1->content.pfd.name));
+	msg2->content.pfd.number = msg1->content.pfd.number;
+	msg2->content.pfd.size = size;
+	memcpy(msg2->content.pfd.data, data, size);
 
-	result = sendto(sock, &portFileData, sizeof(portFileData), 0, (struct sockaddr *)address, length);
-
-	return result;
+	return sendto(sock, msg2, sizeof(struct MSG), 0, (struct sockaddr *)address, length);
 }

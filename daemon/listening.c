@@ -1,31 +1,44 @@
 #include "daemon.h"
 
-int doListen(int sock, struct sockaddr_in *address, socklen_t length)
+int doListen()
 {
-	int n, result;
-	MSG message;
-	MSG_CFR confFileRequest;
-	MSG_PFR portFileRequest;
+	int sock, number, result;
+	socklen_t length;
+	struct MSG *msg;
+	struct sockaddr_in thisAddr, thatAddr;
+
+	sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+
+	bzero(&thisAddr, sizeof(thisAddr));
+	thisAddr.sin_family = AF_INET;
+	thisAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+	thisAddr.sin_port = htons(DAEMON_PORT);
+
+	bind(sock, (struct sockaddr*)&thisAddr, sizeof(thisAddr));
+
+	msg = malloc(sizeof(struct MSG));
 
 	while(1) {
-		n = recvfrom(sock, &message, sizeof(MSG), 0, (struct sockaddr *)address, &length);
+		number = recvfrom(sock, msg, sizeof(struct MSG), 0, (struct sockaddr *)&thatAddr, &length);
+		printf("IP: %s\n", inet_ntoa(thatAddr.sin_addr));
+		printf("recieved: %d\n", number);
 
 		sleep(1);
 
-		switch(message.flag) {
-			case FLAG_CFR :
-				memcpy(&confFileRequest, &message, sizeof(MSG));
-				result = sendConfFileData(&confFileRequest, sock, address, length);
-				printf("bytes sent %d \n", result);
+		switch(msg->flag) {
+			case CFR :
+				printf("CFR!!!\n");
+				result = sendConfFileData(msg, sock, &thatAddr, length);
+				printf("bytes CFD sent %d \n", result);
 				break;
-			case FLAG_PFR :
-				memcpy(&portFileRequest, &message, sizeof(MSG));
-				result = sendPortFileData(&portFileRequest, sock, address, length);
-				printf("bytes sent %d \n", result);
+			case PFR :
+				printf("PFR!!!\n");
+				result = sendPortFileData(msg, sock, &thatAddr, length);
+				printf("bytes PFD sent %d \n", result);
 				break;
 		}
 
-		printf("result: %d\n", result);
+		break;
 	}
 
 	return 0;

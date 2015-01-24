@@ -6,11 +6,6 @@
  *      Author: kamil
  */
 
-#include <dirent.h>
-#include <sys/stat.h>
-#include <string.h>
-#include <time.h>
-#include "../lib.h"
 #include "update.h"
 
 int updateMain(int argc, char **argv) {

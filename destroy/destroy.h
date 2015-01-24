@@ -8,7 +8,8 @@
 #ifndef DESTROY_H_
 #define DESTROY_H_
 
+#include "../lib.h"
+
 int destroyMain(int argc, char **argv);
-int removeAll();
 
 #endif /* DESTROY_H_ */

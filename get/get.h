@@ -8,8 +8,10 @@
 #ifndef GET_H_
 #define GET_H_
 
+#include "../lib.h"
+
 int getMain(int argc, char **argv);
-int sendToBroadcast(MSG* message);
-int receiveIPAddresses();
+int sendToBroadcast(struct MSG *msg);
+int receiveNodes(struct NODE **root);
 
 #endif /* GET_H_ */

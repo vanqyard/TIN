@@ -8,6 +8,8 @@
 #ifndef UPDATE_H_
 #define UPDATE_H_
 
+#include "../lib.h"
+
 int updateMain(int argc, char **argv);
 void updateFile(const char *name);
 void copyFile(const char *name);

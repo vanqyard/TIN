@@ -5,8 +5,6 @@
  *      Author: kamil
  */
 
-#include "../lib.h"
-#include "../destroy/destroy.h"
 #include "init.h"
 
 int initMain(int argc, char **argv) {

@@ -5,9 +5,6 @@
  *      Author: kamil
  */
 
-#include <dirent.h>
-#include <string.h>
-#include "../lib.h"
 #include "destroy.h"
 
 int destroyMain(int argc, char **argv) {
@@ -29,28 +26,6 @@ int destroyMain(int argc, char **argv) {
 		return 1;
 	}
 	printf("Pomyślnie usunięto repozytorium.\n");
-
-	return 0;
-}
-
-int removeAll() {
-	DIR *dir;
-	struct dirent *ent;
-
-	if ((dir = opendir(".")) == NULL) {
-		return 1;
-	}
-
-	while ((ent = readdir(dir)) != NULL) {
-		if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..")) {
-			continue;
-		}
-
-		if (!strncmp(ent->d_name, PREFIX, strlen(PREFIX))) {
-			remove(ent->d_name);
-		}
-	}
-	closedir(dir);
 
 	return 0;
 }

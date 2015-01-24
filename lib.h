@@ -11,11 +11,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+#include <dirent.h>
+#include <netdb.h>
+#include <time.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
 
-#define max(a,b) \
-   ({ __typeof__ (a) _a = (a); \
-       __typeof__ (b) _b = (b); \
-     _a > _b ? _a : _b; })
+#define max(a,b) (((a)>(b))?(a):(b))
 
 #define DAEMON	"daemon"
 #define GET 	"get"
@@ -23,61 +28,60 @@
 #define INIT	"init"
 #define DESTROY	"destroy"
 
-#define LOCAL_IP		"127.0.0.1"
-#define BROADCAST_IP	"255.255.255.255"
+#define BROADCAST_IP	"192.168.56.255"
 #define DAEMON_PORT		2000
 #define GET_PORT		2001
 
-#define CONFIG_NAME		".tin"
-#define TEMP_NAME		".temp_tin"
-#define SEPARATOR		'\t'
-#define EXISTS_FLAG		"EXISTS"
-#define DELETED_FLAG	"DELETED"
-#define MAX_LENGTH		255
-#define NAME_LENGTH		64
-#define PREFIX			".tin."
+#define CONFIG_NAME			".tin"
+#define TEMP_NAME			".temp_tin"
+#define PREFIX				".tin."
+#define SEPARATOR			'\t'
+#define EXISTS_FLAG			"EXISTS"
+#define DELETED_FLAG		"DELETED"
+#define MAX_LENGTH			255
+#define NAME_LENGTH			64
+#define CONF_FILE_LENGTH	400
+#define PORT_FILE_LENGTH	400
 
-#define FLAG_CFR	0
-#define FLAG_CFD	1
-#define FLAG_PFR	2
-#define FLAG_PFD	3
+#define CFR	0
+#define CFD	1
+#define PFR	2
+#define PFD	3
 
-typedef struct MSG {
+struct MSG {
 	char flag;
-	char data[511];
-} MSG;
+	union {
+		struct {} cfr;
 
-typedef struct MSG_CFR {
-	char flag;
-	char data[511];
-} MSG_CFR;
+		struct {
+			unsigned int size;
+			char data[CONF_FILE_LENGTH];
+		} cfd;
 
-typedef struct MSG_CFD {
-	char flag;
-	unsigned int size;
-	char data[507];
-} MSG_CFD;
+		struct {
+			unsigned int number;
+			char name[NAME_LENGTH];
+		} pfr;
 
-typedef struct MSG_PFR {
-	char flag;
-	char name[NAME_LENGTH];
-	unsigned int number;
-	char data[443];
-} MSG_PFR;
+		struct {
+			unsigned int number;
+			unsigned int size;
+			char name[NAME_LENGTH];
+			char data[PORT_FILE_LENGTH];
+		} pfd;
+	} content;
+};
 
-typedef struct MSG_PFD {
-	char flag;
-	char name[NAME_LENGTH];
-	unsigned int number;
-	unsigned int size;
-	char data[439];
-} MSG_PFD;
-
-#define CONF_FILE_LENGTH (sizeof(MSG_CFD) - sizeof(char) - sizeof(unsigned int))
-#define PORT_FILE_LENGTH (sizeof(MSG_PFD) - sizeof(char) - NAME_LENGTH - sizeof(unsigned int) - sizeof(unsigned int))
+struct NODE {
+	struct NODE *next;
+	socklen_t length;
+	struct sockaddr_in address;
+	char data[CONF_FILE_LENGTH];
+};
 
 int fileExists(const char *name);
 void copyFile(const char *name);
 void deleteFile(const char *name);
+int removeAll();
 
 #endif /* LIB_H_ */
